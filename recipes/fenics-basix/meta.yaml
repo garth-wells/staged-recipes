@@ -20,8 +20,8 @@ requirements:
     - cmake
     - pybind11
   host:
-    - blas
-    - lapack
+    - libblas
+    - liblapack
     - python
     - pip
     - scikit-build
@@ -32,18 +32,15 @@ requirements:
     - python
 
 test:
-  # Some packages might need a `test/commands` key to check CLI.
-  # List all the packages/modules that `run_test.py` imports.
-  # imports:
-  #   - simplejson
-  #   - simplejson.tests
-  # For python packages, it is useful to run pip check. However, sometimes the
-  # metadata used by pip is out of date. Thus this section is optional if it is
-  # failing.
   requires:
+    - numba
     - pytest
+    - setuptools
+    - sympy
+  source_files:
+    - test
   commands:
-    - pytest test
+    - pytest -v test
 
 about:
   home: https://github.com/FEniCS/basix
@@ -51,7 +48,6 @@ about:
   license_family: MIT
   license_file: LICENSE
   summary: 'FEniCS finite element basis evaluation library'
-  # The remaining entries in this section are optional, but recommended.
   description: |
     Basix is a finite element definition and tabulation runtime library.
   doc_url: https://docs.fenicsproject.org/basix/main/
