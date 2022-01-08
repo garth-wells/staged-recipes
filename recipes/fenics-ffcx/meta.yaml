@@ -1,5 +1,5 @@
-{% set name = "fenics-ufl" %}
-{% set version = "2021.1.0" %}
+{% set name = "fenics-ffcx" %}
+{% set version = "0.3.1" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   # url: https://github.com/FEniCS/ufl/archive/v{{ version }}.tar.gz
-  url: https://github.com/FEniCS/ufl/archive/refs/tags/{{ version }}.tar.gz
+  url: https://github.com/FEniCS/ffcx/archive/refs/heads/main.zip
   # sha256: 2b3a0c466fb4a1014ea131c2b8ea7c519f9278eba73d6fcb361b7bdb4fd494e9
 
 build:
@@ -20,8 +20,13 @@ requirements:
   host:
     - python
     - pip
+    - fenics-basix
+    - fenics-ufl
   run:
-    - numpy <1.21
+    - cffi
+    - fenics-basix
+    - fenics-ufl
+    - numpy
     - python
 
 test:
@@ -35,19 +40,18 @@ test:
     - pytest -v test
 
 about:
-  home: https://github.com/FEniCS/ufl
+  home: https://github.com/FEniCS/ffcx
   license: LGPL-3.0-or-later
   license_family: LGPL
   license_file: COPYING.LESSER
-  summary: 'Unified Form Language (UFL) for finite element forms'
+  summary: 'Next generation FEniCS Form Compiler'
   description: |
-    The Unified Form Language (UFL) is a domain specific language for
-    declaration of finite element discretizations of variational forms.
-    More precisely, it defines a flexible interface for choosing finite
-    element spaces and defining expressions for weak forms in a notation
-    close to mathematical notation.
-  doc_url: https://fenics.readthedocs.io/projects/ufl
-  dev_url: https://github.com/FEniCS/ufl
+    FFCx is a compiler for finite element variational forms. From a
+    high-level description of the form in the Unified Form Language
+    (UFL), it generates efficient low-level C code that can be used to
+    assemble the corresponding discrete operator (tensor).
+  doc_url: https://docs.fenicsproject.org/ffcx/main/
+  dev_url: https://github.com/FEniCS/ffcx
 
 extra:
   recipe-maintainers:

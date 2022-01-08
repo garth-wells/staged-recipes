@@ -1,4 +1,4 @@
-{% set name = "fenics-basix" %}
+{% set name = "fenics-dolfinx" %}
 {% set version = "0.3.1" %}
 
 package:
@@ -6,34 +6,48 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/FEniCS/basix/archive/refs/heads/main.zip
+  url: https://github.com/FEniCS/dolfinx/archive/refs/heads/main.zip
   # url: https://github.com/FEniCS/basix/archive/v{{ version }}.tar.gz
   # sha256: 9b148fd2a5485c94011fc6ca977ebdef0e51782a62b3654fc044f35b60e2bd07
 
 build:
   skip: True  # [py!=38]
   number: 0
-  script: "{{ PYTHON }} -m pip install . -vv --no-dependencies"
+  script: |
+    cmake -G Ninja -DCMAKE_BUILD_TYPE=Developer -B build -S cpp/
+
+    # cmake --build build
+    # cmake --install build
 
 requirements:
   build:
     - {{ compiler('cxx') }}
     - cmake
-    - scikit-build
+    - ninja
+    - fenics-ffcx
   host:
+    - {{ mpi }}
+    - mpi4py
+    - boost-cpp
+    - petsc
+    - petsc4py
+    - parmetis
     - libblas
     - liblapack
-    - pybind11
     - pip
     - python
-    - scikit-build
     - xtensor
     - xtl
+    - fenics-basix
+    - fenics-ffcx
   run:
     - numpy <1.21
     - python
+    - pybind11
     - scipy
-    - scikit-build
+    # - pkgconfig
+    # - fenics-ffcx
+    # - fenics-ufl
 
 # test:
 #   requires:
@@ -48,15 +62,15 @@ requirements:
 #     - pytest -v -n auto test
 
 about:
-  home: https://github.com/FEniCS/basix
+  home: https://github.com/FEniCS/dolfinx
   license: MIT
   license_family: MIT
   license_file: LICENSE
   summary: 'FEniCS finite element basis evaluation library'
   description: |
     Basix is a finite element definition and tabulation runtime library.
-  doc_url: https://docs.fenicsproject.org/basix/main/
-  dev_url: https://github.com/FEniCS/basix
+  doc_url: https://docs.fenicsproject.org/dolfinx/main/
+  dev_url: https://github.com/FEniCS/dolfinx
 
 extra:
   recipe-maintainers:
