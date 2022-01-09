@@ -1,9 +1,11 @@
 {% set version = "0.3.1" %}
+
+{% set cmake_args = "$CMAKE_ARGS" %}
+
 package:
   name: fenics-pkgs
   version: {{ version }}
 
-{% set cmake_args = "$CMAKE_ARGS" %}
 # {% set cmake_args = "$CMAKE_ARGS" %}  # [not win]
 
 source:
@@ -36,83 +38,93 @@ build:
 
 requirements:
   build:
-    - python
-    - {{ compiler('cxx') }}
-    - ninja
-    - cmake
+    # - python
+    # - {{ compiler('cxx') }}
+    # - ninja
+    - cmake >=3.16
+  host:
+    - cmake >=3.16
+    - numpy >=1.17,<1.21
+  run:
+    - numpy >=1.17,<1.21
 
 outputs:
-   - name: fenics-ufl
-     version: {{ version }}
-     build:
-       script: $PYTHON -m pip install --no-deps ./ufl
-     requirements:
-       host:
-         - pip
-         - python
-       run:
-         - numpy
-         - python
-         - setuptools
-     test:
-       source_files:
-         - ufl/test
-       requires:
-         - pytest
-       commands:
-         - pytest -v ufl/test
+  # - name: fenics-ufl
+  #   version: {{ version }}
+  #   build:
+  #     script: $PYTHON -m pip install --no-deps ./ufl
+  #   requirements:
+  #     host:
+  #       - pip
+  #       - python
+  #     run:
+  #       - numpy >=1.17,<1.21
+  #       - python
+  #       - setuptools
+  #     test:
+  #       source_files:
+  #         - ufl/test
+  #       requires:
+  #         - pytest
+  #       commands:
+  #         - pytest -v ufl/test
 
-   - name: fenics-libbasix
-     version: {{ version }}
-     build:
-       script:
-        - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug {{ cmake_args }} -B build-dir -S ./basix/cpp
+  - name: fenics-libbasix
+    version: {{ version }}
+    build:
+      script:
+        - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release {{ cmake_args }} -B build-dir -S ./basix/cpp
         - cmake --build build-dir --parallel
         - cmake --install build-dir
-     requirements:
-       build:
-         - {{ compiler("c") }}
-         - {{ compiler('cxx') }}
-         - cmake
-         - ninja
-       host:
-         - liblapack
-         - libblas
-         - xtensor
-         - xtl
-       run:
-         - xtensor
-         - xtl
+    requirements:
+      build:
+        - {{ compiler('cxx') }}
+        - cmake
+        - ninja
+      host:
+        - liblapack
+        - libblas
+        - xtensor
+        - xtl
+      run:
+        - xtensor
+        - xtl
 
-  #  - name: fenics-basix
-  #    version: {{ version }}
-  #    build:
-  #      script: $PYTHON -m pip install --no-deps ./basix/python
-  #    requirements:
-  #      build:
-  #        - {{ compiler("c") }}
-  #        - {{ compiler('cxx') }}
-  #        - ninja
-  #        - cmake
-  #        - ninja
-  #        - python
-  #      host:
-  #        - python
-  #        - numpy
-  #        - pybind11
-  #        - {{ pin_subpackage("fenics-libbasix", exact=True) }}
-  #      run:
-  #        - python
-  #        - numpy
-  #        - numba
-  #    test:
-  #      source_files:
-  #        - basix/test
-  #      requires:
-  #        - pytest
-  #        - pytest-xdist
-  #      commands:
-  #        - pytest -v -n auto basix/test
+  - name: fenics-basix
+    version: {{ version }}
+    build:
+      script: $PYTHON -m pip install --no-deps ./basix/python
+    requirements:
+      build:
+        - {{ compiler('cxx') }}
+        - cmake
+        - ninja
+        - python
+      host:
+        - python
+        - pip
+        - numpy
+        - pybind11
+        - {{ pin_subpackage("fenics-libbasix", exact=True) }}
+      run:
+        - numba
+        - numpy
+        - python
+        - {{ pin_subpackage("fenics-libbasix", exact=True) }}
+    test:
+      source_files:
+        - basix/test
+      requires:
+        - pytest
+        - pytest-xdist
+        - scipy
+        - sympy
+      commands:
+        - pytest -v -n auto basix/test
+        # - $PYTHON -c "import numpy; print(numpy.__version__)"
+        # - $PYTHON -c "import numba; print(numba.__version__)"
+        # - pytest -v basix/test/test_numba.py
+
 
   #  - name: fenics-ffcx
   #    version: {{ version }}
