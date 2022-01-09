@@ -15,8 +15,8 @@ source:
     folder: basix
   - url: https://github.com/FEniCS/ffcx/archive/refs/heads/main.zip
     folder: ffcx
-  # - url: https://github.com/FEniCS/dolfinx/archive/refs/heads/main.zip
-  #   folder: dolfinx
+  - url: https://github.com/FEniCS/dolfinx/archive/refs/heads/main.zip
+    folder: dolfinx
 
   #  - url: https://github.com/FEniCS/ufl/archive/refs/tags/{{ version }}.tar.gz
   #    sha256: fe1832e2284f9c7fbd60421adc8bef05ba78a92c5ebc016839209fafaaead414
@@ -158,9 +158,9 @@ outputs:
     version: {{ version }}
     build:
       script:
-        - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug {{ cmake_args }} -B build-dir -S ./dolfinx/cpp
-        - cmake --build build-dir
-        - cmake --install build-dir
+        - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug {{ cmake_args }} -B dolfinx-build-dir -S ./dolfinx/cpp
+        - cmake --build dolfinx-build-dir --parallel
+        - cmake --install dolfinx-build-dir
          #  {% set mpi_prefix = "mpi_" + mpi %}
     requirements:
       build:
@@ -185,25 +185,23 @@ outputs:
         - {{ pin_subpackage("fenics-ffcx", exact=True) }}
         # need to list libnetcdf and netcdf-fortran twice to get version
         # pinning from conda_build_config and build pinning from {{ mpi_prefix }}
-        - hdf5
+        # - hdf5
+        - hdf5 * mpi_{{ mpi }}_*
         #  - hdf5 * {{ mpi_prefix }}_*
       run:
         - {{ compiler('cxx') }}
-        #  - eigen
-        #  - mpich
+        - {{ mpi }}
+        - boost-cpp
         - parmetis
         - petsc
         - slepc
         - pkgconfig
         - ptscotch
-        - suitesparse
         - xtensor
-  # #        - {{ compiler('cxx') }}
         - xtl
         - zlib
         - {{ pin_subpackage("fenics-ffcx", exact=True) }}
         - {{ pin_subpackage("fenics-libbasix", exact=True) }}
-        - boost-cpp
 
 
   # #  - name: fenics-dolfinx
