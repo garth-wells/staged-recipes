@@ -154,56 +154,56 @@ outputs:
       commands:
         - pytest -v -n auto ffcx/test
 
-  #  - name: fenics-libdolfinx
-  #    version: {{ version }}
-  #    build:
-  #      script:
-  #       - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug {{ cmake_args }} -B build-dir -S ./cpp
-  #       - cmake --build build-dir
-  #       - cmake --install build-dir
-  #     #  {% set mpi_prefix = "mpi_" + mpi %}
-  #    requirements:
-  #      build:
-  #        - {{ compiler("c") }}
-  #        - {{ compiler('cxx') }}
-  #        - ninja
-  #        - cmake
-  #       #  - git
-  #      host:
-  #        - {{ mpi }}
-  #        - libblas
-  #        - liblapack
-  #        - boost-cpp
-  #        - parmetis
-  #        - pkg-config
-  #        - ptscotch
-  #        - suitesparse
-  #        - petsc
-  #        - slepc
-  #        - xtensor
-  #        - xtl
-  #        - {{ pin_subpackage("fenics-libbasix", exact=True) }}
-  #        - {{ pin_subpackage("fenics-ffcx", exact=True) }}
-  #        # need to list libnetcdf and netcdf-fortran twice to get version
-  #        # pinning from conda_build_config and build pinning from {{ mpi_prefix }}
-  #        - hdf5
-  #       #  - hdf5 * {{ mpi_prefix }}_*
-  #      run:
-  #        - {{ compiler('cxx') }}
-  #       #  - eigen
-  #       #  - mpich
-  #        - parmetis
-  #        - petsc
-  #        - slepc
-  #        - pkgconfig
-  #        - ptscotch
-  #        - suitesparse
-  #        - xtensor
-  #        - xtl
-  #        - zlib
-  #        - {{ pin_subpackage("fenics-ffcx", exact=True) }}
-  #        - {{ pin_subpackage("fenics-libbasix", exact=True) }}
-  #        - boost-cpp
+  - name: fenics-libdolfinx
+    version: {{ version }}
+    build:
+      script:
+        - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug {{ cmake_args }} -B build-dir -S ./dolfinx/cpp
+        - cmake --build build-dir
+        - cmake --install build-dir
+         #  {% set mpi_prefix = "mpi_" + mpi %}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - {{ compiler('cxx') }}
+        - ninja
+        - cmake
+      host:
+        - {{ mpi }}
+        - libblas
+        - liblapack
+        - boost-cpp
+        - parmetis
+        - pkg-config
+        - ptscotch
+        - suitesparse
+        - petsc
+        - slepc
+        - xtensor
+        - xtl
+        - {{ pin_subpackage("fenics-libbasix", exact=True) }}
+        - {{ pin_subpackage("fenics-ffcx", exact=True) }}
+        # need to list libnetcdf and netcdf-fortran twice to get version
+        # pinning from conda_build_config and build pinning from {{ mpi_prefix }}
+        - hdf5
+        #  - hdf5 * {{ mpi_prefix }}_*
+      run:
+        - {{ compiler('cxx') }}
+        #  - eigen
+        #  - mpich
+        - parmetis
+        - petsc
+        - slepc
+        - pkgconfig
+        - ptscotch
+        - suitesparse
+        - xtensor
+  # #        - {{ compiler('cxx') }}
+        - xtl
+        - zlib
+        - {{ pin_subpackage("fenics-ffcx", exact=True) }}
+        - {{ pin_subpackage("fenics-libbasix", exact=True) }}
+        - boost-cpp
 
 
   # #  - name: fenics-dolfinx
