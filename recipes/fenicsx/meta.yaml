@@ -13,8 +13,8 @@ source:
     folder: ufl
   - url: https://github.com/FEniCS/basix/archive/refs/heads/main.zip
     folder: basix
-  # - url: https://github.com/FEniCS/ffcx/archive/refs/heads/main.zip
-  #   folder: ffcx
+  - url: https://github.com/FEniCS/ffcx/archive/refs/heads/main.zip
+    folder: ffcx
   # - url: https://github.com/FEniCS/dolfinx/archive/refs/heads/main.zip
   #   folder: dolfinx
 
@@ -49,25 +49,25 @@ requirements:
     - numpy >=1.17,<1.21
 
 outputs:
-  # - name: fenics-ufl
-  #   version: {{ version }}
-  #   build:
-  #     script: $PYTHON -m pip install --no-deps ./ufl
-  #   requirements:
-  #     host:
-  #       - pip
-  #       - python
-  #     run:
-  #       - numpy >=1.17,<1.21
-  #       - python
-  #       - setuptools
-  #     test:
-  #       source_files:
-  #         - ufl/test
-  #       requires:
-  #         - pytest
-  #       commands:
-  #         - pytest -v ufl/test
+  - name: fenics-ufl
+    version: {{ version }}
+    build:
+      script: $PYTHON -m pip install --no-deps ./ufl
+    requirements:
+      host:
+        - pip
+        - python
+      run:
+        - numpy >=1.17,<1.21
+        - python
+        - setuptools
+      test:
+        source_files:
+          - ufl/test
+        requires:
+          - pytest
+        commands:
+          - pytest -v ufl/test
 
   - name: fenics-libbasix
     version: {{ version }}
@@ -111,52 +111,48 @@ outputs:
         - numpy
         - python
         - {{ pin_subpackage("fenics-libbasix", exact=True) }}
+    # test:
+    #   source_files:
+    #     - basix/test
+    #   requires:
+    #     - pytest
+    #     - pytest-xdist
+    #     - scipy
+    #     - sympy
+    #   commands:
+    #     - pytest -v -n auto basix/test
+
+  - name: fenics-ffcx
+    version: {{ version }}
+    build:
+      script:
+        - $PYTHON -m pip install --no-deps ./ffcx
+        #  - mkdir -p $PREFIX/include
+        #  - cp ffcx/ffcx/codegeneration/*.h $PREFIX/include/
+    requirements:
+      build:
+        - python
+        - pip
+      host:
+        - python
+        - pip
+      run:
+        - {{ compiler("c") }}
+        - python
+        - numpy
+        - cffi
+        - pygraphviz
+        - {{ pin_subpackage("fenics-basix", exact=True) }}
+        - {{ pin_subpackage("fenics-ufl", exact=True) }}
     test:
       source_files:
-        - basix/test
+        - ffcx/test
       requires:
         - pytest
         - pytest-xdist
-        - scipy
         - sympy
       commands:
-        - pytest -v -n auto basix/test
-        # - $PYTHON -c "import numpy; print(numpy.__version__)"
-        # - $PYTHON -c "import numba; print(numba.__version__)"
-        # - pytest -v basix/test/test_numba.py
-
-
-  #  - name: fenics-ffcx
-  #    version: {{ version }}
-  #    build:
-  #      script:
-  #        - $PYTHON -m pip install --no-deps ./ffcx
-  #       #  - mkdir -p $PREFIX/include
-  #       #  - cp ffcx/ffcx/codegeneration/*.h $PREFIX/include/
-  #    requirements:
-  #      build:
-  #        - python
-  #        - pip
-  #      host:
-  #        - python
-  #        - pip
-  #      run:
-  #        - {{ compiler("c") }} # [linux]
-  #        - python
-  #        - numpy
-  #        - cffi
-  #        - pygraphviz
-  #        - {{ pin_subpackage("fenics-basix", exact=True) }}
-  #        - {{ pin_subpackage("fenics-ufl", exact=True) }}
-  #    test:
-  #      source_files:
-  #        - ffcx/test
-  #      requires:
-  #        - pytest
-  #        - pytest-xdist
-  #        - sympy
-  #      commands:
-  #        - pytest -v -n auto ffcx/test
+        - pytest -v -n auto ffcx/test
 
   #  - name: fenics-libdolfinx
   #    version: {{ version }}
