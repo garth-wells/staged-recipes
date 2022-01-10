@@ -15,7 +15,9 @@ source:
     folder: basix
   - url: https://github.com/FEniCS/ffcx/archive/refs/heads/main.zip
     folder: ffcx
-  - url: https://github.com/FEniCS/dolfinx/archive/refs/heads/main.zip
+  # - url: https://github.com/FEniCS/dolfinx/archive/refs/heads/main.zip
+  #   folder: dolfinx
+  - url: https://github.com/FEniCS/dolfinx/archive/refs/heads/conda-test.zip
     folder: dolfinx
 
   #  - url: https://github.com/FEniCS/ufl/archive/refs/tags/{{ version }}.tar.gz
@@ -158,17 +160,19 @@ outputs:
     version: {{ version }}
     build:
       script:
-        - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug {{ cmake_args }} -B dolfinx-build-dir -S ./dolfinx/cpp
+        - PETSC_DIR=$PREFIX cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug {{ cmake_args }} \
+           -B dolfinx-build-dir -S ./dolfinx/cpp
         - cmake --build dolfinx-build-dir --parallel
         - cmake --install dolfinx-build-dir
          #  {% set mpi_prefix = "mpi_" + mpi %}
     requirements:
       build:
-        - {{ compiler("c") }}
+        # - {{ compiler("c") }}
         - {{ compiler('cxx') }}
         - ninja
         - cmake
       host:
+        - python
         - {{ mpi }}
         - libblas
         - liblapack
