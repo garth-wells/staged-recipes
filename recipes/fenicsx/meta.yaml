@@ -134,7 +134,7 @@ outputs:
       script:
         - cmake {{ cmake_args }} -B ufcx-build-dir -S ./ufcx
         - cmake --build ufcx-build-dir
-        - cmake --install ufxc-build-dir
+        - cmake --install ufcx-build-dir
     requirements:
       build:
         - {{ compiler('c') }}
@@ -235,41 +235,41 @@ outputs:
         - {{ pin_subpackage("fenics-libbasix", exact=True) }}
 
 
-  # #  - name: fenics-dolfinx
-  # #    version: {{ version }}
-  # #    build:
-  # #      script: ${RECIPE_DIR}/build-dolfinx.sh
-  # #    requirements:
-  # #      build:
-  # #        - {{ compiler("c") }}
-  # #        - {{ compiler('cxx') }}
-  # #        - make
-  # #        - cmake
-  # #        - python=3.8
-  # #        - pybind11
-  # #      host:
-  # #        - python=3.8
-  # #        - fenics-basix
-  # #        - fenics-ufl
-  # #        - fenics-ffcx
-  # #        - fenics-libdolfinx
-  # #      run:
-  # #        - python=3.8
-  # #        - fenics-basix
-  # #        - fenics-ufl
-  # #        - fenics-ffcx
-  # #        - fenics-libdolfinx
-  # #        - numpy
-  # #        - mpi4py
-  # #        - petsc4py
-  # #    test:
-  # #      source_files:
-  # #        - dolfinx/test
-  # #      requires:
-  # #        - pytest
-  # #        - pytest-xdist
-  # #      commands:
-  # #        - pytest -v dolfinx/test
+  # # #  - name: fenics-dolfinx
+  # # #    version: {{ version }}
+  # # #    build:
+  # # #      script: ${RECIPE_DIR}/build-dolfinx.sh
+  # # #    requirements:
+  # # #      build:
+  # # #        - {{ compiler("c") }}
+  # # #        - {{ compiler('cxx') }}
+  # # #        - make
+  # # #        - cmake
+  # # #        - python=3.8
+  # # #        - pybind11
+  # # #      host:
+  # # #        - python=3.8
+  # # #        - fenics-basix
+  # # #        - fenics-ufl
+  # # #        - fenics-ffcx
+  # # #        - fenics-libdolfinx
+  # # #      run:
+  # # #        - python=3.8
+  # # #        - fenics-basix
+  # # #        - fenics-ufl
+  # # #        - fenics-ffcx
+  # # #        - fenics-libdolfinx
+  # # #        - numpy
+  # # #        - mpi4py
+  # # #        - petsc4py
+  # # #    test:
+  # # #      source_files:
+  # # #        - dolfinx/test
+  # # #      requires:
+  # # #        - pytest
+  # # #        - pytest-xdist
+  # # #      commands:
+  # # #        - pytest -v dolfinx/test
 
 about:
   home: http://www.fenicsproject.org
