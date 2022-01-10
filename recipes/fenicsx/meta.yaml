@@ -19,6 +19,8 @@ source:
   #   folder: dolfinx
   - url: https://github.com/FEniCS/dolfinx/archive/refs/heads/conda-test.zip
     folder: dolfinx
+  - url: https://github.com/garth-wells/ufcx/archive/refs/heads/main.zip
+    folder: ufcx
 
   #  - url: https://github.com/FEniCS/ufl/archive/refs/tags/{{ version }}.tar.gz
   #    sha256: fe1832e2284f9c7fbd60421adc8bef05ba78a92c5ebc016839209fafaaead414
@@ -54,6 +56,7 @@ outputs:
   - name: fenics-ufl
     version: {{ version }}
     build:
+      noarch: python
       script: $PYTHON -m pip install --no-deps ./ufl
     requirements:
       host:
@@ -124,13 +127,29 @@ outputs:
     #   commands:
     #     - pytest -v -n auto basix/test
 
+  - name: ufcx
+    version: {{ version }}
+    build:
+      noarch: generic
+      script:
+        - cmake {{ cmake_args }} -B ufcx-build-dir -S ./ufcx
+        - cmake --build ufcx-build-dir
+        - cmake --install -ufxc build-dir
+    requirements:
+      build:
+        - {{ compiler('c') }}
+        - cmake
+    test:
+      commands:
+        - test -f $PREFIX/include/ufc.h
+
   - name: fenics-ffcx
     version: {{ version }}
     build:
+      noarch:
+        python
       script:
         - $PYTHON -m pip install --no-deps ./ffcx
-        #  - mkdir -p $PREFIX/include
-        #  - cp ffcx/ffcx/codegeneration/*.h $PREFIX/include/
     requirements:
       build:
         - python
@@ -153,58 +172,66 @@ outputs:
         - pytest
         - pytest-xdist
         - sympy
+        - ufcx
       commands:
         - pytest -v -n auto ffcx/test
 
   - name: fenics-libdolfinx
     version: {{ version }}
     build:
+      {% set mpi_prefix = "mpi_" + mpi %}
       script:
-        - PETSC_DIR=$PREFIX cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug {{ cmake_args }} \
-           -B dolfinx-build-dir -S ./dolfinx/cpp
+        # - echo "---"
+        # - echo "---"
+        # - echo "---"
+        # - echo "---"
+        # - echo "*********************Start build steps"
+        # - echo $PYTHON
+        # - $PYTHON --version
+        # - echo $CMAKE_ARGS
+        # - echo {{ cmake_args }}
+        # - $PYTHON -c "import ffcx.codegeneration as cg; import os, os.path; print(os.listdir(os.path.dirname(cg.__file__)))"
+        - PETSC_DIR=$PREFIX cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug {{ cmake_args }} -DPython3_EXECUTABLE="$PYTHON" -DUFC_INCLUDE_DIR=$PREFIX -B dolfinx-build-dir -S ./dolfinx/cpp
         - cmake --build dolfinx-build-dir --parallel
         - cmake --install dolfinx-build-dir
-         #  {% set mpi_prefix = "mpi_" + mpi %}
     requirements:
       build:
-        # - {{ compiler("c") }}
+        - {{ compiler("c") }}
         - {{ compiler('cxx') }}
+        # - python
+        # - {{ pin_subpackage("fenics-ffcx", exact=True) }}
+      host:
         - ninja
         - cmake
-      host:
-        - python
+        # - python
         - {{ mpi }}
+        - ufcx
         - libblas
         - liblapack
         - boost-cpp
         - parmetis
         - pkg-config
         - ptscotch
-        - suitesparse
-        - petsc
-        - slepc
+        - petsc >=3.16
+        # - slepc
         - xtensor
         - xtl
         - {{ pin_subpackage("fenics-libbasix", exact=True) }}
         - {{ pin_subpackage("fenics-ffcx", exact=True) }}
-        # need to list libnetcdf and netcdf-fortran twice to get version
-        # pinning from conda_build_config and build pinning from {{ mpi_prefix }}
-        # - hdf5
         - hdf5 * mpi_{{ mpi }}_*
-        #  - hdf5 * {{ mpi_prefix }}_*
       run:
         - {{ compiler('cxx') }}
         - {{ mpi }}
         - boost-cpp
         - parmetis
-        - petsc
-        - slepc
+        - petsc >=3.16
+        # - slepc
         - pkgconfig
         - ptscotch
         - xtensor
         - xtl
         - zlib
-        - {{ pin_subpackage("fenics-ffcx", exact=True) }}
+        # - {{ pin_subpackage("fenics-ffcx", exact=True) }}
         - {{ pin_subpackage("fenics-libbasix", exact=True) }}
 
 
