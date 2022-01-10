@@ -134,7 +134,7 @@ outputs:
       script:
         - cmake {{ cmake_args }} -B ufcx-build-dir -S ./ufcx
         - cmake --build ufcx-build-dir
-        - cmake --install -ufxc build-dir
+        - cmake --install ufxc-build-dir
     requirements:
       build:
         - {{ compiler('c') }}
